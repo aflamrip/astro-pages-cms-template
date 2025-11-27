@@ -1,0 +1,19 @@
+---
+const { title, poster, rating, href, type } = Astro.props;
+---
+
+<div class="media-card">
+  <a href={href}>
+    <img src={poster} alt={title} loading="lazy" />
+    <span class="type-badge">{type}</span>
+    {rating && <span class="rating">{rating}</span>}
+    <h3>{title}</h3>
+  </a>
+</div>
+
+<style>
+  .media-card { position: relative; width: 200px; margin: 10px; }
+  .media-card img { width: 100%; border-radius: 8px; }
+  .type-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; }
+  .rating { position: absolute; top: 10px; left: 10px; background: #f39c12; padding: 4px 8px; }
+</style>
