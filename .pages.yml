@@ -2,7 +2,7 @@ media:
   - name: media
     label: "الوسائط"
     input: "content/media"
-    output: "/media"
+    output: "public/media"
     extensions: [mp4, jpg, jpeg, png]
 
 content:
