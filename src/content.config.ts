@@ -1,46 +1,62 @@
-import { glob } from 'astro/loaders';
 import { defineCollection, z } from 'astro:content';
 
-// مجموعة الأفلام
 const movies = defineCollection({
-	loader: glob({ base: './src/content/movies', pattern: '**/*.md' }),
-	schema: z.object({
-		title: z.string(),
-		slug: z.string(),
-		poster: z.string(),
-		description: z.string(),
-		tags: z.array(z.string()),
-		video: z.string(),
-		genres: z.array(z.string()).optional(),
-		year: z.number().optional(),
-		type: z.string().default("movie"),
-	}),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    poster: z.string(),
+    video: z.string(),
+    tags: z.array(z.string()),
+    genres: z.array(z.string()),
+    year: z.number(),
+    type: z.literal("movie"),
+    recommendations: z.array(
+      z.object({
+        slug: z.string(),
+        title: z.string(),
+        poster: z.string()
+      })
+    ).optional()
+  })
 });
 
-// مجموعة المسلسلات
 const series = defineCollection({
-	loader: glob({ base: './src/content/series', pattern: '**/*.md' }),
-	schema: z.object({
-		title: z.string(),
-		slug: z.string(),
-		poster: z.string(),
-		description: z.string(),
-		tags: z.array(z.string()),
-		seasons: z.array(z.object({ number: z.number() })),
-	}),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    poster: z.string(),
+    video: z.string().optional(),
+    tags: z.array(z.string()),
+    genres: z.array(z.string()),
+    year: z.number(),
+    type: z.literal("series"),
+    episodes: z.array(
+      z.object({
+        slug: z.string(),
+        title: z.string(),
+        poster: z.string()
+      })
+    ).optional(),
+    similar: z.array(
+      z.object({
+        slug: z.string(),
+        title: z.string(),
+        poster: z.string()
+      })
+    ).optional()
+  })
 });
 
-// مجموعة الحلقات
 const episodes = defineCollection({
-	loader: glob({ base: './src/content/episodes', pattern: '**/*.md' }),
-	schema: z.object({
-		title: z.string(),
-		slug: z.string(),
-		seriesSlug: z.string(),
-		season: z.number(),
-		poster: z.string(),
-		video: z.string(), // mp4 أو m3u8
-	}),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    poster: z.string(),
+    video: z.string(),
+    tags: z.array(z.string()),
+    seriesSlug: z.string(),
+    type: z.literal("episode")
+  })
 });
 
 export const collections = { movies, series, episodes };
