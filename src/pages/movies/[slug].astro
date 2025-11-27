@@ -1,5 +1,4 @@
 ---
-// src/pages/movies/[slug].astro
 import { getCollection } from 'astro:content';
 import PlyrPlayer from '../../components/PlyrPlayer.astro';
 
@@ -13,8 +12,13 @@ export async function getStaticPaths() {
 
 const { movie } = Astro.props;
 let showPlayer = false;
----
 
+// تحويل الوسوم من string إلى array
+// يفصل العناصر بالفواصل أو الأسطر الجديدة
+const tagsArray = movie.data.tags
+  ? movie.data.tags.split(/[,\\n]/).map(tag => tag.trim()).filter(tag => tag.length > 0)
+  : [];
+---
 <section class="movie-page max-w-5xl mx-auto p-4">
   <h1 class="text-3xl font-bold mb-2">{movie.data.title}</h1>
   
@@ -22,8 +26,8 @@ let showPlayer = false;
     <p class="mb-2">{movie.data.description}</p>
   )}
 
-  {movie.data.tags && movie.data.tags.length > 0 && (
-    <p class="mb-4 text-sm text-gray-500">Tags: {movie.data.tags.join(', ')}</p>
+  {tagsArray.length > 0 && (
+    <p class="mb-4 text-sm text-gray-500">Tags: {tagsArray.join(', ')}</p>
   )}
 
   {movie.data.videoUrl && (
