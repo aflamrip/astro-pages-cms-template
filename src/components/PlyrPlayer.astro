@@ -1,0 +1,19 @@
+---
+const { src } = Astro.props;
+---
+
+<div class="plyr-container mt-4">
+  <video
+    class="plyr__video-embed"
+    controls
+    playsinline
+    crossorigin
+  >
+    <source src={src} type="video/mp4" />
+  </video>
+</div>
+
+<script type="module">
+  import Plyr from 'plyr';
+  const player = new Plyr(document.querySelector('.plyr__video-embed'));
+</script>
