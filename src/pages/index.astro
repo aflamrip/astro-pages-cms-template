@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 
 const movies = await getCollection('movies');
+const series = await getCollection('series');
+const episodes = await getCollection('episodes');
 ---
 
 <section class="slider my-8">
@@ -11,7 +13,7 @@ const movies = await getCollection('movies');
         <div class="swiper-slide">
           <a href={`/movies/${item.slug}`}>
             <img src={item.data.poster} alt={item.data.title} class="rounded-lg shadow-lg" />
-            <h2 class="text-xl mt-2">{item.data.title}</h2>
+            <h2 class="text-xl mt-2 text-center">{item.data.title}</h2>
           </a>
         </div>
       ))}
@@ -23,6 +25,43 @@ const movies = await getCollection('movies');
   </div>
 </section>
 
+<section class="latest-episodes my-8">
+  <h2 class="text-2xl font-bold mb-4">أحدث الحلقات</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {episodes.slice(0,8).map(ep => (
+      <a href={`/series/${ep.data.seriesSlug}/episode/${ep.slug}`}>
+        <img src={ep.data.poster} alt={ep.data.title} class="rounded-lg shadow-md"/>
+        <p class="mt-2 text-center">{ep.data.title}</p>
+      </a>
+    ))}
+  </div>
+</section>
+
+<section class="movies my-8">
+  <h2 class="text-2xl font-bold mb-4">الأفلام</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {movies.map(movie => (
+      <a href={`/movies/${movie.slug}`} class="hover:scale-105 transition-transform">
+        <img src={movie.data.poster} alt={movie.data.title} class="rounded-lg shadow-md" />
+        <p class="text-center mt-2">{movie.data.title}</p>
+      </a>
+    ))}
+  </div>
+</section>
+
+<section class="series my-8">
+  <h2 class="text-2xl font-bold mb-4">المسلسلات</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {series.map(s => (
+      <a href={`/series/${s.slug}`} class="hover:scale-105 transition-transform">
+        <img src={s.data.poster} alt={s.data.title} class="rounded-lg shadow-md" />
+        <p class="text-center mt-2">{s.data.title}</p>
+      </a>
+    ))}
+  </div>
+</section>
+
+<!-- Swiper JS -->
 <script type="module">
   import Swiper, { Navigation, Pagination } from 'swiper';
   import 'swiper/css';
