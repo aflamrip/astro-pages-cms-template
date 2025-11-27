@@ -10,7 +10,10 @@ const movies = defineCollection({
 		poster: z.string(),
 		description: z.string(),
 		tags: z.array(z.string()),
-		video: z.string(), // mp4 أو m3u8
+		video: z.string(),
+		genres: z.array(z.string()).optional(),
+		year: z.number().optional(),
+		type: z.string().default("movie"),
 	}),
 });
 
