@@ -6,66 +6,66 @@ media:
     extensions: [mp4, jpg, jpeg, png]
 
 content:
-  - name: movies
-    label: "أفلام"
-    type: collection
-    path: "src/content/movies"
-    view:
-      fields:
-        - title
-        - body
-        - tags
-        - video
-        - image
+- name: movies
+  label: "أفلام"
+  type: collection
+  path: "src/content/movies"
+  view:
     fields:
-      - name: title
-        label: "اسم الفيلم"
-        type: string
-      - name: body
-        label: "الوصف"
-        type: rich-text
-      - name: tags
-        label: "الكلمات الدلالية"
-        type: string
-      - name: video
-        label: "رابط الفيلم"
-        type: string
-      - name: image
-        label: "صورة الغلاف"
-        type: image
-        options:
-          path: media
+      - title
+      - description
+      - tags
+      - videoUrl
+      - poster
+  fields:
+    - name: title
+      label: "اسم الفيلم"
+      type: string
+    - name: description
+      label: "الوصف"
+      type: rich-text
+    - name: tags
+      label: "الكلمات الدلالية"
+      type: string
+    - name: videoUrl
+      label: "رابط الفيلم"
+      type: string
+    - name: poster
+      label: "صورة الغلاف"
+      type: image
+      options:
+        path: media
 
-  - name: series
-    label: "مسلسلات"
-    type: collection
-    path: "src/content/series"
-    view:
-      fields:
-        - title
-        - episodeNumber
-        - body
-        - tags
-        - video
-        - image
+- name: series
+  label: "مسلسلات"
+  type: collection
+  path: "src/content/series"
+  view:
     fields:
-      - name: title
-        label: "اسم المسلسل"
-        type: string
-      - name: episodeNumber
-        label: "رقم الحلقة"
-        type: number
-      - name: body
-        label: "الوصف"
-        type: rich-text
-      - name: tags
-        label: "الكلمات الدلالية"
-        type: string
-      - name: video
-        label: "رابط الحلقة"
-        type: string
-      - name: image
-        label: "صورة الغلاف"
-        type: image
-        options:
-          path: media
+      - title
+      - episodeNumber
+      - description
+      - tags
+      - videoUrl
+      - poster
+  fields:
+    - name: title
+      label: "اسم المسلسل"
+      type: string
+    - name: episodeNumber
+      label: "رقم الحلقة"
+      type: number
+    - name: description
+      label: "الوصف"
+      type: rich-text
+    - name: tags
+      label: "الكلمات الدلالية"
+      type: string
+    - name: videoUrl
+      label: "رابط الحلقة"
+      type: string
+    - name: poster
+      label: "صورة الغلاف"
+      type: image
+      options:
+        path: media
