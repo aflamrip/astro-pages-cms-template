@@ -3,27 +3,30 @@ import { getEntryBySlug, getCollection } from 'astro:content';
 import Plyr from 'plyr';
 
 const series = await getEntryBySlug('series', Astro.params.slug);
-const episodes = await getCollection('episodes'); // جميع الحلقات
+const episodes = await getCollection('episodes');
 const seriesEpisodes = episodes.filter(e => e.data.seriesSlug === series.slug);
-let showPlayer = null; // لتحديد الحلقة التي سيتم تشغيلها
+const relatedSeries = (await getCollection('series')).filter(s => s.slug !== series.slug);
+let showPlayer = null;
 ---
 
-<section class="series-page">
-  <img src={series.data.poster} alt={series.data.title} />
-  <h1>{series.data.title}</h1>
-  <p>{series.data.description}</p>
-  <p>Tags: {series.data.tags.join(", ")}</p>
+<section class="max-w-5xl mx-auto p-4">
+  <img src={series.data.poster} alt={series.data.title} class="rounded-lg shadow-lg" />
+  <h1 class="text-3xl font-bold mt-4">{series.data.title}</h1>
+  <p class="mt-2">{series.data.description}</p>
+  <p class="mt-2 text-gray-500">Tags: {series.data.tags.join(", ")}</p>
 
-  <!-- الحلقات حسب الموسم -->
+  <!-- الحلقات والمواسم -->
   {series.data.seasons.map(season => (
-    <section class="season">
-      <h2>الموسم {season.number}</h2>
-      <div class="grid">
+    <section class="season mt-6">
+      <h2 class="text-2xl font-bold mb-2">الموسم {season.number}</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         {seriesEpisodes.filter(ep => ep.data.season === season.number).map(ep => (
           <div class="episode">
-            <img src={ep.data.poster} alt={ep.data.title} />
-            <h3>{ep.data.title}</h3>
-            <button onClick={() => showPlayer = ep.data.video}>المشاهدة الآن</button>
+            <img src={ep.data.poster} alt={ep.data.title} class="rounded-lg shadow-md"/>
+            <h3 class="mt-2">{ep.data.title}</h3>
+            <button class="mt-2 bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700" onClick={() => showPlayer = ep.data.video}>
+              المشاهدة الآن
+            </button>
           </div>
         ))}
       </div>
@@ -32,20 +35,34 @@ let showPlayer = null; // لتحديد الحلقة التي سيتم تشغيل
 
   <!-- مشغل الفيديو -->
   {showPlayer && (
-    <Plyr
-      type="video"
-      sources={[{ src: showPlayer, type: showPlayer.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' }]}
-    />
+    <div class="mt-4">
+      <video id="player" controls class="w-full rounded-lg">
+        <source src={showPlayer} type={showPlayer.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'} />
+      </video>
+    </div>
   )}
 
-  <!-- حلقات ومسلسلات مشابهة -->
-  <section class="related">
-    <h2>مسلسلات مشابهة</h2>
-    <div class="grid">
+  <!-- حلقات أخرى -->
+  <section class="other-episodes mt-8">
+    <h2 class="text-2xl font-bold mb-4">حلقات أخرى</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       {seriesEpisodes.slice(0,4).map(ep => (
         <a href={`/series/${ep.data.seriesSlug}/episode/${ep.slug}`}>
-          <img src={ep.data.poster} alt={ep.data.title} />
-          <p>{ep.data.title}</p>
+          <img src={ep.data.poster} alt={ep.data.title} class="rounded-lg shadow-md" />
+          <p class="text-center mt-2">{ep.data.title}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- مسلسلات مشابهة -->
+  <section class="similar-series mt-8">
+    <h2 class="text-2xl font-bold mb-4">مسلسلات مشابهة</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {relatedSeries.slice(0,4).map(s => (
+        <a href={`/series/${s.slug}`} class="hover:scale-105 transition-transform">
+          <img src={s.data.poster} alt={s.data.title} class="rounded-lg shadow-md" />
+          <p class="text-center mt-2">{s.data.title}</p>
         </a>
       ))}
     </div>
