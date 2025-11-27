@@ -1,4 +1,9 @@
 ---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import MediaCard from '../../components/MediaCard.astro';
+import VideoPlayer from '../../components/VideoPlayer.astro';
+
 export async function getStaticPaths() {
   const movies = await getCollection('movies');
   return movies.map(movie => ({
@@ -8,11 +13,11 @@ export async function getStaticPaths() {
 }
 
 const { movie } = Astro.props;
+
 const relatedMovies = await getCollection('movies', ({ data, slug }) => 
   slug !== movie.slug && data.genres.some(g => movie.data.genres.includes(g))
 ).then(movies => movies.slice(0, 6));
 ---
-
 <Layout title={movie.data.title}>
   <div class="movie-page">
     <div class="movie-header">
@@ -23,7 +28,7 @@ const relatedMovies = await getCollection('movies', ({ data, slug }) =>
         <!-- روابط المشاهدة -->
         <div class="watch-links">
           {movie.data.videoUrl && (
-            <button class="watch-btn" onclick="showPlayer()">
+            <button class="watch-btn" onClick={() => showPlayer()}>
               ▶ مشاهدة الآن
             </button>
           )}
