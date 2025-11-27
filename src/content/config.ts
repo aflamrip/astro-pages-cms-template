@@ -64,8 +64,8 @@ const blogCollection = defineCollection({
   }),
 });
 
-export const collections = {
-  movies: moviesCollection,
-  series: seriesCollection,
-  blog: blogCollection,
+-export const collections = {
+  movies: movieCollection,
+  series: movieCollection,
+  episodes: movieCollection,
 };
