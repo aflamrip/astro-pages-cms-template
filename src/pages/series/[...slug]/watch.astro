@@ -1,0 +1,25 @@
+---
+const { slug, season, episode } = Astro.params;
+const series = await getCollection('series');
+const serie = series.find(s => s.slug === slug);
+const ep = serie?.data.seasons.find(s => s.season === Number(season))
+  ?.episodes.find(e => e.episode === Number(episode));
+---
+
+<Layout title={`${serie?.data.title} - الحلقة ${episode}`}>
+  {ep ? (
+    <div class="watch-episode">
+      <h1>{serie?.data.title} - الحلقة {episode}</h1>
+      
+      {ep.embedUrl ? (
+        <iframe src={ep.embedUrl} frameborder="0" allowfullscreen></iframe>
+      ) : ep.videoUrl ? (
+        <VideoPlayer videoUrl={ep.videoUrl} />
+      ) : (
+        <p>لا يوجد رابط فيديو متاح</p>
+      )}
+    </div>
+  ) : (
+    <p>الحلقة غير موجودة</p>
+  )}
+</Layout>
