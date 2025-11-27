@@ -1,39 +1,43 @@
 ---
-import { getEntryBySlug, getCollection } from 'astro:content';
-import Plyr from 'plyr';
+import { getCollection } from 'astro:content';
+import PlyrPlayer from '../../components/PlyrPlayer.astro'; // مشغل الفيديو كـ Astro Island
 
-const movie = await getEntryBySlug('movies', Astro.params.slug);
-const relatedMovies = (await getCollection('movies')).filter(m => m.slug !== movie.slug);
+export async function getStaticPaths() {
+  const movies = await getCollection('movies');
+  return movies.map(movie => ({
+    params: { slug: movie.slug },
+    props: { movie }
+  }));
+}
+
+const { movie } = Astro.props;
 let showPlayer = false;
 ---
 
-<section class="max-w-5xl mx-auto p-4">
-  <img src={movie.data.poster} alt={movie.data.title} class="rounded-lg shadow-lg" />
-  <h1 class="text-3xl font-bold mt-4">{movie.data.title}</h1>
-  <p class="mt-2">{movie.data.description}</p>
-  <p class="mt-2 text-gray-500">Tags: {movie.data.tags.join(", ")}</p>
+<section class="movie-page max-w-5xl mx-auto p-4">
+  <img src={movie.data.poster} alt={movie.data.title} class="rounded-lg shadow-lg mb-4" />
+  <h1 class="text-3xl font-bold mb-2">{movie.data.title}</h1>
+  <p class="mb-2">{movie.data.description}</p>
+  <p class="mb-4 text-sm text-gray-500">Tags: {movie.data.tags.join(', ')}</p>
 
-  <button class="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700" onClick={() => showPlayer = !showPlayer}>
+  <button 
+    class="bg-red-600 text-white px-4 py-2 rounded mb-4"
+    on:click={() => showPlayer = true}
+  >
     المشاهدة الآن
   </button>
 
-  {showPlayer && (
-    <div class="mt-4">
-      <video id="player" controls class="w-full rounded-lg">
-        <source src={movie.data.video} type={movie.data.video.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'} />
-      </video>
-    </div>
+  {showPlayer && movie.data.video && (
+    <PlyrPlayer src={movie.data.video} />
   )}
 
-  <section class="related-movies mt-8">
-    <h2 class="text-2xl font-bold mb-4">أفلام أخرى</h2>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {relatedMovies.slice(0,4).map(m => (
-        <a href={`/movies/${m.slug}`} class="hover:scale-105 transition-transform">
-          <img src={m.data.poster} alt={m.data.title} class="rounded-lg shadow-md" />
-          <p class="text-center mt-2">{m.data.title}</p>
-        </a>
-      ))}
-    </div>
-  </section>
+  <h2 class="text-2xl font-bold mt-8 mb-4">أفلام أخرى</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {movie.data.recommendations?.map(rec => (
+      <a href={`/movies/${rec.slug}`} class="hover:scale-105 transition-transform">
+        <img src={rec.poster} alt={rec.title} class="rounded-lg shadow-md" />
+        <p class="text-center mt-2">{rec.title}</p>
+      </a>
+    ))}
+  </div>
 </section>
