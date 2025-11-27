@@ -16,6 +16,7 @@ content:
         - body
         - tags
         - video
+        - image
     fields:
       - name: title
         label: "اسم الفيلم"
@@ -29,6 +30,11 @@ content:
       - name: video
         label: "رابط الفيلم"
         type: string
+      - name: image
+        label: "صورة الغلاف"
+        type: image
+        options:
+          path: media
 
   - name: series
     label: "مسلسلات"
@@ -37,10 +43,11 @@ content:
     view:
       fields:
         - title
+        - episodeNumber
         - body
         - tags
         - video
-        - episodeNumber
+        - image
     fields:
       - name: title
         label: "اسم المسلسل"
@@ -57,3 +64,8 @@ content:
       - name: video
         label: "رابط الحلقة"
         type: string
+      - name: image
+        label: "صورة الغلاف"
+        type: image
+        options:
+          path: media
