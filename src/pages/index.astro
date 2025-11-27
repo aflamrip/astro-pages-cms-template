@@ -6,79 +6,50 @@ const series = await getCollection('series');
 const episodes = await getCollection('episodes');
 ---
 
-<section class="slider my-8">
-  <div class="swiper">
-    <div class="swiper-wrapper">
-      {movies.slice(0,5).map(item => (
-        <div class="swiper-slide">
-          <a href={`/movies/${item.slug}`}>
-            <img src={item.data.poster} alt={item.data.title} class="rounded-lg shadow-lg" />
-            <h2 class="text-xl mt-2 text-center">{item.data.title}</h2>
-          </a>
-        </div>
+<!-- قسم الأفلام الرئيسية -->
+<section class="movies-slider my-8 max-w-6xl mx-auto">
+  <h2 class="text-3xl font-bold mb-4">أحدث الأفلام</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {movies
+      .filter(m => m.data.title && m.data.poster)
+      .slice(0, 8)
+      .map(movie => (
+        <a href={`/movies/${movie.slug}`} class="hover:scale-105 transition-transform">
+          <img src={movie.data.poster} alt={movie.data.title} class="rounded-lg shadow-md" />
+          <p class="text-center mt-2 font-semibold">{movie.data.title}</p>
+        </a>
       ))}
-    </div>
-    <!-- Pagination / Navigation -->
-    <div class="swiper-pagination"></div>
-    <div class="swiper-button-next"></div>
-    <div class="swiper-button-prev"></div>
   </div>
 </section>
 
-<section class="latest-episodes my-8">
-  <h2 class="text-2xl font-bold mb-4">أحدث الحلقات</h2>
+<!-- قسم المسلسلات -->
+<section class="series-slider my-8 max-w-6xl mx-auto">
+  <h2 class="text-3xl font-bold mb-4">المسلسلات</h2>
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    {episodes.slice(0,8).map(ep => (
-      <a href={`/series/${ep.data.seriesSlug}/episode/${ep.slug}`}>
-        <img src={ep.data.poster} alt={ep.data.title} class="rounded-lg shadow-md"/>
-        <p class="mt-2 text-center">{ep.data.title}</p>
-      </a>
-    ))}
+    {series
+      .filter(s => s.data.title && s.data.poster)
+      .slice(0, 8)
+      .map(s => (
+        <a href={`/series/${s.slug}`} class="hover:scale-105 transition-transform">
+          <img src={s.data.poster} alt={s.data.title} class="rounded-lg shadow-md" />
+          <p class="text-center mt-2 font-semibold">{s.data.title}</p>
+        </a>
+      ))}
   </div>
 </section>
 
-<section class="movies my-8">
-  <h2 class="text-2xl font-bold mb-4">الأفلام</h2>
+<!-- قسم أحدث الحلقات -->
+<section class="latest-episodes my-8 max-w-6xl mx-auto">
+  <h2 class="text-3xl font-bold mb-4">أحدث الحلقات</h2>
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    {movies.map(movie => (
-      <a href={`/movies/${movie.slug}`} class="hover:scale-105 transition-transform">
-        <img src={movie.data.poster} alt={movie.data.title} class="rounded-lg shadow-md" />
-        <p class="text-center mt-2">{movie.data.title}</p>
-      </a>
-    ))}
+    {episodes
+      .filter(ep => ep.data.title && ep.data.poster && ep.data.seriesSlug)
+      .slice(0, 8)
+      .map(ep => (
+        <a href={`/series/${ep.data.seriesSlug}/episode/${ep.slug}`} class="hover:scale-105 transition-transform">
+          <img src={ep.data.poster} alt={ep.data.title} class="rounded-lg shadow-md"/>
+          <p class="text-center mt-2 font-semibold">{ep.data.title}</p>
+        </a>
+      ))}
   </div>
 </section>
-
-<section class="series my-8">
-  <h2 class="text-2xl font-bold mb-4">المسلسلات</h2>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    {series.map(s => (
-      <a href={`/series/${s.slug}`} class="hover:scale-105 transition-transform">
-        <img src={s.data.poster} alt={s.data.title} class="rounded-lg shadow-md" />
-        <p class="text-center mt-2">{s.data.title}</p>
-      </a>
-    ))}
-  </div>
-</section>
-
-<!-- Swiper JS -->
-<script type="module">
-  import Swiper, { Navigation, Pagination } from 'swiper';
-  import 'swiper/css';
-  import 'swiper/css/navigation';
-  import 'swiper/css/pagination';
-
-  const swiper = new Swiper('.swiper', {
-    modules: [Navigation, Pagination],
-    slidesPerView: 1,
-    loop: true,
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      clickable: true,
-    },
-  });
-</script>
