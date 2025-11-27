@@ -1,56 +1,46 @@
-content:
-  - name: blog
-    label: Blog
-    path: src/content/blog
-    filename: '{year}-{month}-{day}-{fields.title}.md'
-    type: collection
-    view:
-      fields: [heroImage, title, pubDate]
-    fields:
-      - name: title
-        label: Title
-        type: string
-      - name: description
-        label: Description
-        type: text
-      - name: pubDate
-        label: Publication Date
-        type: date
-        options:
-          format: MM/dd/yyyy
-      - name: updatedDate
-        label: Last Updated Date
-        type: date
-        options:
-          format: MM/dd/yyyy
-      - name: heroImage
-        label: Hero Image
-        type: image
-      - name: body
-        label: Body
-        type: rich-text
+media_folder: "public/images"
+public_folder: "/images"
 
-  - name: site-settings
-    label: Site Settings
-    path: src/config/site.json
-    type: file
+collections:
+  - name: "movies"
+    label: "الأفلام"
+    folder: "src/content/movies"
+    create: true
+    slug: "{{slug}}"
     fields:
-      - name: title
-        label: Website title
-        type: string
-      - name: description
-        label: Website description
-        type: string
-        description: Will be used for any page with no description.
-      - name: url
-        label: Website URL
-        type: string
-        pattern: ^(https?:\/\/)?(www\.)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/[^\s]*)?$
-      - name: cover
-        label: Preview image
-        type: image
-        description: Image used in the social preview on social networks (e.g. Facebook, Twitter...)
+      - { label: "العنوان", name: "title", widget: "string" }
+      - { label: "البوستر", name: "poster", widget: "image" }
+      - { label: "الوصف", name: "description", widget: "text" }
+      - { label: "النوع", name: "genres", widget: "list", field: { label: "نوع", name: "genre", widget: "string" } }
+      - { label: "السنة", name: "year", widget: "number" }
+      - { label: "التقييم", name: "rating", widget: "number", required: false }
+      - { label: "المدة", name: "duration", widget: "string", required: false }
+      - { label: "البلد", name: "country", widget: "string", required: false }
+      - { label: "الجودة", name: "quality", widget: "string", required: false }
+      - { label: "رابط الفيديو (m3u8/mp4)", name: "videoUrl", widget: "string", required: false }
+      - { label: "رابط Embed", name: "embedUrl", widget: "string", required: false }
+      - { label: "نوع المحتوى", name: "type", widget: "hidden", default: "movie" }
 
-media:
-  input: public/media
-  output: /media
+  - name: "series"
+    label: "المسلسلات"
+    folder: "src/content/series"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "العنوان", name: "title", widget: "string" }
+      - { label: "البوستر", name: "poster", widget: "image" }
+      - { label: "الوصف", name: "description", widget: "text" }
+      - { label: "النوع", name: "genres", widget: "list", field: { label: "نوع", name: "genre", widget: "string" } }
+      - { label: "السنة", name: "year", widget: "number" }
+      - { label: "التقييم", name: "rating", widget: "number", required: false }
+      - { label: "البلد", name: "country", widget: "string", required: false }
+      - { label: "المواسم", name: "seasons", widget: "list", fields: [
+          { label: "رقم الموسم", name: "season", widget: "number" },
+          { label: "الحلقات", name: "episodes", widget: "list", fields: [
+              { label: "رقم الحلقة", name: "episode", widget: "number" },
+              { label: "عنوان الحلقة", name: "title", widget: "string" },
+              { label: "رابط الفيديو", name: "videoUrl", widget: "string", required: false },
+              { label: "رابط Embed", name: "embedUrl", widget: "string", required: false }
+          ]}
+      ]}
+      - { label: "نوع المحتوى", name: "type", widget: "hidden", default: "series" }
