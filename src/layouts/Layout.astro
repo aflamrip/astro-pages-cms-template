@@ -1,0 +1,199 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonicalURL?: string;
+}
+
+const { title, description, image, canonicalURL } = Astro.props;
+const siteTitle = "عرب سيد - أفلام ومسلسلات";
+const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
+---
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description || "مشاهدة وتحميل الأفلام والمسلسلات المترجمة بجودة عالية"} />
+  <meta name="keywords" content="أفلام, مسلسلات, مترجم, عرب سيد, مشاهدة, تحميل" />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={image} />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ar_AR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  
+  {canonicalURL && <link rel="canonical" href={canonicalURL} />}
+  
+  <title>{fullTitle}</title>
+  
+  <ViewTransitions />
+</head>
+
+<body class="bg-gray-900 text-white">
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-black/90 backdrop-blur">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold text-red-600">عرب سيد</a>
+      <nav class="hidden md:flex gap-6">
+        <a href="/" class="hover:text-red-500 transition">الرئيسية</a>
+        <a href="/movies/" class="hover:text-red-500 transition">أفلام</a>
+        <a href="/series/" class="hover:text-red-500 transition">مسلسلات</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="min-h-screen">
+    <slot />
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-black py-8 mt-12 border-t border-gray-800">
+    <div class="container mx-auto px-4 text-center">
+      <p class="text-gray-400">© 2025 عرب سيد - جميع الحقوق محفوظة</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // إعداد Plyr للمشغل
+    document.addEventListener('astro:page-load', () => {
+      const videoContainers = document.querySelectorAll('.video-player');
+      videoContainers.forEach(container => {
+        const video = container.querySelector('video');
+        if (video && !container.querySelector('iframe')) {
+          import('plyr').then(({ default: Plyr }) => {
+            new Plyr(video);
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
+<style is:global>
+  /* تنسيقات عامة */
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+  
+  body {
+    font-family: 'Tajawal', sans-serif;
+  }
+
+  /* تنسيق السلايدر */
+  .hero-slider {
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .slide-content {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+    text-align: right;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  /* تنسيق البطاقات */
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .media-card img {
+    border-radius: 8px;
+    transition: transform 0.3s;
+  }
+
+  .media-card:hover img {
+    transform: scale(1.05);
+  }
+
+  /* تنسيق الأزرار */
+  .watch-btn {
+    background: #e74c3c;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px;
+    transition: background 0.3s;
+  }
+
+  .watch-btn:hover {
+    background: #c0392b;
+  }
+
+  /* تنسيق الكلمات الدلالية */
+  .genre-tag {
+    background: #333;
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 15px;
+    text-decoration: none;
+    margin: 5px;
+    display: inline-block;
+    font-size: 14px;
+  }
+
+  /* تنسيق صفحات التفاصيل */
+  .movie-header, .series-header {
+    display: flex;
+    gap: 30px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .poster {
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+
+  /* تنسيق قائمة الحلقات */
+  .episodes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 20px 0;
+  }
+
+  .episode-card {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    transition: background 0.3s;
+  }
+
+  .episode-card:hover {
+    background: #e74c3c;
+  }
+</style>
