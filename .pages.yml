@@ -1,46 +1,33 @@
-media_folder: "public/images"
-public_folder: "/images"
-
-collections:
-  - name: "movies"
-    label: "الأفلام"
-    folder: "src/content/movies"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "العنوان", name: "title", widget: "string" }
-      - { label: "البوستر", name: "poster", widget: "image" }
-      - { label: "الوصف", name: "description", widget: "text" }
-      - { label: "النوع", name: "genres", widget: "list", field: { label: "نوع", name: "genre", widget: "string" } }
-      - { label: "السنة", name: "year", widget: "number" }
-      - { label: "التقييم", name: "rating", widget: "number", required: false }
-      - { label: "المدة", name: "duration", widget: "string", required: false }
-      - { label: "البلد", name: "country", widget: "string", required: false }
-      - { label: "الجودة", name: "quality", widget: "string", required: false }
-      - { label: "رابط الفيديو (m3u8/mp4)", name: "videoUrl", widget: "string", required: false }
-      - { label: "رابط Embed", name: "embedUrl", widget: "string", required: false }
-      - { label: "نوع المحتوى", name: "type", widget: "hidden", default: "movie" }
-
-  - name: "series"
-    label: "المسلسلات"
-    folder: "src/content/series"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "العنوان", name: "title", widget: "string" }
-      - { label: "البوستر", name: "poster", widget: "image" }
-      - { label: "الوصف", name: "description", widget: "text" }
-      - { label: "النوع", name: "genres", widget: "list", field: { label: "نوع", name: "genre", widget: "string" } }
-      - { label: "السنة", name: "year", widget: "number" }
-      - { label: "التقييم", name: "rating", widget: "number", required: false }
-      - { label: "البلد", name: "country", widget: "string", required: false }
-      - { label: "المواسم", name: "seasons", widget: "list", fields: [
-          { label: "رقم الموسم", name: "season", widget: "number" },
-          { label: "الحلقات", name: "episodes", widget: "list", fields: [
-              { label: "رقم الحلقة", name: "episode", widget: "number" },
-              { label: "عنوان الحلقة", name: "title", widget: "string" },
-              { label: "رابط الفيديو", name: "videoUrl", widget: "string", required: false },
-              { label: "رابط Embed", name: "embedUrl", widget: "string", required: false }
-          ]}
-      ]}
-      - { label: "نوع المحتوى", name: "type", widget: "hidden", default: "series" }
+# .pages.yml
+name: "astro-movies-cms"
+framework: "astro"
+rootDirectory: "./"
+buildCommand: "npm install && npm run build"
+outputDirectory: "dist"
+installCommand: "npm install"
+nodeVersion: "22.16.0"
+environment:
+  ASTRO_PUBLIC_BASE_URL: "/"
+  NODE_ENV: "production"
+staticAssets:
+  - "public"
+  - "content"
+ignore:
+  - "node_modules"
+  - ".git"
+  - ".cache"
+plugins:
+  - name: "tailwindcss" # إذا كنت تستخدم Tailwind
+  - name: "vite"
+routes:
+  - path: "/movies/:slug"
+    type: "static"
+    collection: "movies"
+  - path: "/series/:slug"
+    type: "static"
+    collection: "series"
+  - path: "/series/:seriesSlug/episode/:slug"
+    type: "static"
+    collection: "episodes"
+  - path: "/*"
+    type: "static"
