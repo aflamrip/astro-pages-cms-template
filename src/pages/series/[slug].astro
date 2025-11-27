@@ -1,0 +1,79 @@
+---
+export async function getStaticPaths() {
+  const series = await getCollection('series');
+  return series.map(serie => ({
+    params: { slug: serie.slug },
+    props: { serie },
+  }));
+}
+
+const { serie } = Astro.props;
+const { seasons } = serie.data;
+const allEpisodes = seasons.flatMap(s => 
+  s.episodes.map(e => ({ ...e, season: s.season }))
+);
+---
+
+<Layout title={serie.data.title}>
+  <div class="series-page">
+    <div class="series-header">
+      <img src={serie.data.poster} alt={serie.data.title} class="poster" />
+      <div class="series-info">
+        <h1>{serie.data.title}</h1>
+        
+        <!-- معلومات المسلسل -->
+        <div class="details">
+          <span>📅 {serie.data.year}</span>
+          <span>🌐 {serie.data.country}</span>
+          <span>📊 {seasons.length} مواسم</span>
+        </div>
+        
+        <!-- الكلمات الدلالية -->
+        <div class="genres">
+          {serie.data.genres.map(g => (
+            <a href={`/genre/${g}/`} class="genre-tag">{g}</a>
+          ))}
+        </div>
+        
+        <!-- الوصف -->
+        <div class="description">
+          <h3>القصة</h3>
+          <p>{serie.data.description}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- قائمة الحلقات -->
+    <section class="episodes-section">
+      <h2>الحلقات</h2>
+      {seasons.map(season => (
+        <div class="season">
+          <h3>الموسم {season.season}</h3>
+          <div class="episodes-grid">
+            {season.episodes.map(ep => (
+              <a 
+                href={`/series/${serie.slug}/season/${season.season}/episode/${ep.episode}/`}
+                class="episode-card"
+              >
+                <span class="ep-number">{ep.episode}</span>
+                <span class="ep-title">{ep.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <!-- حلقات أخرى -->
+    <section class="related-episodes">
+      <h2>حلقات أخرى</h2>
+      <div class="episodes-list">
+        {allEpisodes.slice(0, 10).map(ep => (
+          <a href={`/series/${serie.slug}/season/${ep.season}/episode/${ep.episode}/`}>
+            الحلقة {ep.episode} - {ep.title}
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>
