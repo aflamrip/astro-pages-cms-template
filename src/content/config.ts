@@ -8,17 +8,11 @@ const moviesCollection = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-    poster: z.string(),
-    description: z.string(),
-    genres: z.array(z.string()),
-    year: z.number(),
-    rating: z.number().optional(),
-    duration: z.string().optional(),
-    country: z.string().optional(),
-    quality: z.string().optional(),
-    videoUrl: z.string().optional(),
-    embedUrl: z.string().optional(),
-    type: z.literal('movie'),
+    poster: z.string(),          // صورة الغلاف
+    description: z.string(),     // وصف الفيلم
+    tags: z.string().optional(), // الكلمات الدلالية
+    videoUrl: z.string(),        // رابط الفيلم
+    year: z.number().optional(),
   }),
 });
 
@@ -29,27 +23,26 @@ const seriesCollection = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-    poster: z.string(),
-    description: z.string(),
-    genres: z.array(z.string()),
-    year: z.number(),
-    rating: z.number().optional(),
-    country: z.string().optional(),
-    type: z.literal('series'),
-    seasons: z.array(z.object({
-      season: z.number(),
-      episodes: z.array(z.object({
-        episode: z.number(),
-        title: z.string(),
-        videoUrl: z.string().optional(),
-        embedUrl: z.string().optional(),
-      })),
-    })),
+    poster: z.string(),          // صورة الغلاف للمسلسل
+    description: z.string(),     // وصف المسلسل
+    tags: z.string().optional(), // الكلمات الدلالية
+    seasons: z.array(
+      z.object({
+        season: z.number(),
+        episodes: z.array(
+          z.object({
+            episode: z.number(),   // رقم الحلقة
+            title: z.string(),    // عنوان الحلقة
+            videoUrl: z.string(), // رابط الحلقة
+          })
+        )
+      })
+    ),
+    year: z.number().optional(),
   }),
 });
 
--export const collections = {
-  movies: movieCollection,
-  series: movieCollection,
-  episodes: movieCollection,
+export const collections = {
+  movies: moviesCollection,
+  series: seriesCollection,
 };
