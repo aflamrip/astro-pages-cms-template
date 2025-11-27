@@ -1,61 +1,61 @@
 ---
 import { getCollection } from 'astro:content';
-import Swiper from '@swiper/js';
+import Swiper from 'swiper';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const movies = await getCollection('movies');
 const series = await getCollection('series');
-const latestEpisodes = await getCollection('episodes');
-
+const episodes = await getCollection('episodes');
 ---
 
-<!-- Slider -->
-<section class="slider">
-  <Swiper>
-    {movies.slice(0,5).map(movie => (
-      <div class="swiper-slide">
-        <a href={`/movies/${movie.slug}`}>
-          <img src={movie.data.poster} alt={movie.data.title} />
-          <h2>{movie.data.title}</h2>
-        </a>
-      </div>
-    ))}
-  </Swiper>
+<section class="slider my-8">
+  <div class="swiper">
+    <div class="swiper-wrapper">
+      {movies.slice(0,5).map(item => (
+        <div class="swiper-slide">
+          <a href={`/movies/${item.slug}`}>
+            <img src={item.data.poster} alt={item.data.title} class="rounded-lg shadow-lg" />
+            <h2 class="text-xl mt-2">{item.data.title}</h2>
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
 </section>
 
-<!-- Latest Episodes -->
-<section class="latest-episodes">
-  <h2>أحدث الحلقات</h2>
-  <div class="grid">
-    {latestEpisodes.map(ep => (
+<section class="latest-episodes my-8">
+  <h2 class="text-2xl font-bold mb-4">أحدث الحلقات</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {episodes.slice(0,8).map(ep => (
       <a href={`/series/${ep.data.seriesSlug}/episode/${ep.slug}`}>
-        <img src={ep.data.poster} alt={ep.data.title} />
-        <p>{ep.data.title}</p>
+        <img src={ep.data.poster} alt={ep.data.title} class="rounded-lg shadow-md"/>
+        <p class="mt-2 text-center">{ep.data.title}</p>
       </a>
     ))}
   </div>
 </section>
 
-<!-- Movies -->
-<section class="movies">
-  <h2>الأفلام</h2>
-  <div class="grid">
+<section class="movies my-8">
+  <h2 class="text-2xl font-bold mb-4">الأفلام</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
     {movies.map(movie => (
-      <a href={`/movies/${movie.slug}`}>
-        <img src={movie.data.poster} alt={movie.data.title} />
-        <p>{movie.data.title}</p>
+      <a href={`/movies/${movie.slug}`} class="hover:scale-105 transition-transform">
+        <img src={movie.data.poster} alt={movie.data.title} class="rounded-lg shadow-md" />
+        <p class="text-center mt-2">{movie.data.title}</p>
       </a>
     ))}
   </div>
 </section>
 
-<!-- Series -->
-<section class="series">
-  <h2>المسلسلات</h2>
-  <div class="grid">
+<section class="series my-8">
+  <h2 class="text-2xl font-bold mb-4">المسلسلات</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
     {series.map(s => (
-      <a href={`/series/${s.slug}`}>
-        <img src={s.data.poster} alt={s.data.title} />
-        <p>{s.data.title}</p>
+      <a href={`/series/${s.slug}`} class="hover:scale-105 transition-transform">
+        <img src={s.data.poster} alt={s.data.title} class="rounded-lg shadow-md" />
+        <p class="text-center mt-2">{s.data.title}</p>
       </a>
     ))}
   </div>
