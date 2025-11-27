@@ -1,0 +1,89 @@
+---
+export async function getStaticPaths() {
+  const movies = await getCollection('movies');
+  return movies.map(movie => ({
+    params: { slug: movie.slug },
+    props: { movie },
+  }));
+}
+
+const { movie } = Astro.props;
+const relatedMovies = await getCollection('movies', ({ data, slug }) => 
+  slug !== movie.slug && data.genres.some(g => movie.data.genres.includes(g))
+).then(movies => movies.slice(0, 6));
+---
+
+<Layout title={movie.data.title}>
+  <div class="movie-page">
+    <div class="movie-header">
+      <img src={movie.data.poster} alt={movie.data.title} class="poster" />
+      <div class="movie-info">
+        <h1>{movie.data.title}</h1>
+        
+        <!-- روابط المشاهدة -->
+        <div class="watch-links">
+          {movie.data.videoUrl && (
+            <button class="watch-btn" onclick="showPlayer()">
+              ▶ مشاهدة الآن
+            </button>
+          )}
+          {movie.data.embedUrl && (
+            <a href={movie.data.embedUrl} class="watch-btn" target="_blank">
+              ▶ مشاهدة خارجية
+            </a>
+          )}
+        </div>
+        
+        <!-- تفاصيل -->
+        <div class="details">
+          <span>📅 {movie.data.year}</span>
+          <span>⏱️ {movie.data.duration}</span>
+          <span>🌐 {movie.data.country}</span>
+          <span>📺 {movie.data.quality}</span>
+        </div>
+        
+        <!-- الكلمات الدلالية -->
+        <div class="genres">
+          {movie.data.genres.map(g => (
+            <a href={`/genre/${g}/`} class="genre-tag">{g}</a>
+          ))}
+        </div>
+        
+        <!-- الوصف -->
+        <div class="description">
+          <h3>القصة</h3>
+          <p>{movie.data.description}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- مشغل الفيديو (مخفي بداية) -->
+    <div id="player-container" style="display: none;">
+      <VideoPlayer videoUrl={movie.data.videoUrl} embedUrl={movie.data.embedUrl} />
+    </div>
+
+    <!-- أفلام مشابهة -->
+    <section class="related">
+      <h2>أفلام أخرى</h2>
+      <div class="media-grid">
+        {relatedMovies.map(m => (
+          <MediaCard 
+            title={m.data.title}
+            poster={m.data.poster}
+            rating={m.data.rating}
+            href={`/movie/${m.slug}/`}
+            type="فيلم"
+          />
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  function showPlayer() {
+    const container = document.getElementById('player-container');
+    container.style.display = 'block';
+    container.scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
