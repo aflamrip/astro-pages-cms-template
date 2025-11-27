@@ -1,33 +1,59 @@
-# .pages.yml
-name: "astro-movies-cms"
-framework: "astro"
-rootDirectory: "./"
-buildCommand: "npm install && npm run build"
-outputDirectory: "dist"
-installCommand: "npm install"
-nodeVersion: "22.16.0"
-environment:
-  ASTRO_PUBLIC_BASE_URL: "/"
-  NODE_ENV: "production"
-staticAssets:
-  - "public"
-  - "content"
-ignore:
-  - "node_modules"
-  - ".git"
-  - ".cache"
-plugins:
-  - name: "tailwindcss" # إذا كنت تستخدم Tailwind
-  - name: "vite"
-routes:
-  - path: "/movies/:slug"
-    type: "static"
-    collection: "movies"
-  - path: "/series/:slug"
-    type: "static"
-    collection: "series"
-  - path: "/series/:seriesSlug/episode/:slug"
-    type: "static"
-    collection: "episodes"
-  - path: "/*"
-    type: "static"
+media:
+  - name: media
+    label: "الوسائط"
+    input: "content/media"
+    output: "/media"
+    extensions: [mp4, jpg, jpeg, png]
+
+content:
+  - name: movies
+    label: "أفلام"
+    type: collection
+    path: "content/movies"
+    view:
+      fields:
+        - title
+        - body
+        - tags
+        - video
+    fields:
+      - name: title
+        label: "اسم الفيلم"
+        type: string
+      - name: body
+        label: "الوصف"
+        type: rich-text
+      - name: tags
+        label: "الكلمات الدلالية"
+        type: string
+      - name: video
+        label: "رابط الفيلم"
+        type: string
+
+  - name: series
+    label: "مسلسلات"
+    type: collection
+    path: "content/series"
+    view:
+      fields:
+        - title
+        - body
+        - tags
+        - video
+        - episodeNumber
+    fields:
+      - name: title
+        label: "اسم المسلسل"
+        type: string
+      - name: episodeNumber
+        label: "رقم الحلقة"
+        type: number
+      - name: body
+        label: "الوصف"
+        type: rich-text
+      - name: tags
+        label: "الكلمات الدلالية"
+        type: string
+      - name: video
+        label: "رابط الحلقة"
+        type: string
