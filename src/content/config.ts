@@ -1,0 +1,48 @@
+// src/content/config.ts
+import { defineCollection, z } from 'astro:content';
+
+const moviesCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    poster: z.string(),
+    description: z.string(),
+    genres: z.array(z.string()),
+    year: z.number(),
+    rating: z.number().optional(),
+    duration: z.string().optional(),
+    country: z.string().optional(),
+    quality: z.string().optional(),
+    videoUrl: z.string().optional(), // m3u8 or mp4
+    embedUrl: z.string().optional(), // embed iframe
+    type: z.literal('movie'),
+  }),
+});
+
+const seriesCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    poster: z.string(),
+    description: z.string(),
+    genres: z.array(z.string()),
+    year: z.number(),
+    rating: z.number().optional(),
+    country: z.string().optional(),
+    type: z.literal('series'),
+    seasons: z.array(z.object({
+      season: z.number(),
+      episodes: z.array(z.object({
+        episode: z.number(),
+        title: z.string(),
+        videoUrl: z.string().optional(),
+        embedUrl: z.string().optional(),
+      })),
+    })),
+  }),
+});
+
+export const collections = {
+  movies: moviesCollection,
+  series: seriesCollection,
+};
