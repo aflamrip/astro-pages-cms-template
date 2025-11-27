@@ -1,4 +1,8 @@
 ---
+import Layout from '../../layouts/Layout.astro';
+import MediaCard from '../../components/MediaCard.astro';
+
+// جلب جميع المسلسلات من الكولكشن
 export async function getStaticPaths() {
   const series = await getCollection('series');
   return series.map(serie => ({
@@ -9,9 +13,16 @@ export async function getStaticPaths() {
 
 const { serie } = Astro.props;
 const { seasons } = serie.data;
+
+// جمع كل الحلقات في مصفوفة واحدة
 const allEpisodes = seasons.flatMap(s => 
   s.episodes.map(e => ({ ...e, season: s.season }))
 );
+
+// إيجاد مسلسلات مشابهة بحسب النوع
+const relatedSeries = await getCollection('series', ({ data, slug }) => 
+  slug !== serie.slug && data.genres.some(g => serie.data.genres.includes(g))
+).then(series => series.slice(0, 6));
 ---
 
 <Layout title={serie.data.title}>
@@ -75,5 +86,23 @@ const allEpisodes = seasons.flatMap(s =>
         ))}
       </div>
     </section>
+
+    <!-- مسلسلات مشابهة -->
+    {relatedSeries.length > 0 && (
+      <section class="related-series">
+        <h2>مسلسلات مشابهة</h2>
+        <div class="media-grid">
+          {relatedSeries.map(s => (
+            <MediaCard
+              title={s.data.title}
+              poster={s.data.poster}
+              rating={s.data.rating}
+              href={`/series/${s.slug}/`}
+              type="مسلسل"
+            />
+          ))}
+        </div>
+      </section>
+    )}
   </div>
 </Layout>
