@@ -1,45 +1,62 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import HeroSlider from '../components/HeroSlider.astro';
-import MediaCard from '../components/MediaCard.astro';
 import { getCollection } from 'astro:content';
+import Swiper from '@swiper/js';
 
 const movies = await getCollection('movies');
 const series = await getCollection('series');
-const latestMovies = movies.sort((a, b) => b.data.year - a.data.year).slice(0, 10);
-const latestSeries = series.sort((a, b) => b.data.year - a.data.year).slice(0, 10);
+const latestEpisodes = await getCollection('episodes');
+
 ---
 
-<Layout title="موقع الأفلام والمسلسلات">
-  <HeroSlider />
-  
-  <section class="latest-section">
-    <h2>أحدث الأفلام</h2>
-    <div class="media-grid">
-      {latestMovies.map((movie) => (
-        <MediaCard 
-          title={movie.data.title}
-          poster={movie.data.poster}
-          rating={movie.data.rating}
-          href={`/movie/${movie.slug}/`}
-          type="فيلم"
-        />
-      ))}
-    </div>
-  </section>
+<!-- Slider -->
+<section class="slider">
+  <Swiper>
+    {movies.slice(0,5).map(movie => (
+      <div class="swiper-slide">
+        <a href={`/movies/${movie.slug}`}>
+          <img src={movie.data.poster} alt={movie.data.title} />
+          <h2>{movie.data.title}</h2>
+        </a>
+      </div>
+    ))}
+  </Swiper>
+</section>
 
-  <section class="latest-section">
-    <h2>أحدث المسلسلات</h2>
-    <div class="media-grid">
-      {latestSeries.map((serie) => (
-        <MediaCard 
-          title={serie.data.title}
-          poster={serie.data.poster}
-          rating={serie.data.rating}
-          href={`/series/${serie.slug}/`}
-          type="مسلسل"
-        />
-      ))}
-    </div>
-  </section>
-</Layout>
+<!-- Latest Episodes -->
+<section class="latest-episodes">
+  <h2>أحدث الحلقات</h2>
+  <div class="grid">
+    {latestEpisodes.map(ep => (
+      <a href={`/series/${ep.data.seriesSlug}/episode/${ep.slug}`}>
+        <img src={ep.data.poster} alt={ep.data.title} />
+        <p>{ep.data.title}</p>
+      </a>
+    ))}
+  </div>
+</section>
+
+<!-- Movies -->
+<section class="movies">
+  <h2>الأفلام</h2>
+  <div class="grid">
+    {movies.map(movie => (
+      <a href={`/movies/${movie.slug}`}>
+        <img src={movie.data.poster} alt={movie.data.title} />
+        <p>{movie.data.title}</p>
+      </a>
+    ))}
+  </div>
+</section>
+
+<!-- Series -->
+<section class="series">
+  <h2>المسلسلات</h2>
+  <div class="grid">
+    {series.map(s => (
+      <a href={`/series/${s.slug}`}>
+        <img src={s.data.poster} alt={s.data.title} />
+        <p>{s.data.title}</p>
+      </a>
+    ))}
+  </div>
+</section>
