@@ -48,22 +48,6 @@ const seriesCollection = defineCollection({
   }),
 });
 
-/** =========================
- * Blog Collection
- * ========================= */
-const blogCollection = defineCollection({
-  type: 'content',
-  schema: z.object({
-    title: z.string(),
-    heroImage: z.string(),
-    description: z.string().optional(),
-    pubDate: z.preprocess(
-      (val) => new Date(val as string), // تحويل أي نص إلى Date
-      z.date()
-    ),
-  }),
-});
-
 -export const collections = {
   movies: movieCollection,
   series: movieCollection,
