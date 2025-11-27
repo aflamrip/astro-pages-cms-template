@@ -26,7 +26,7 @@ content:
         type: rich-text
       - name: tags
         label: "الكلمات الدلالية"
-        type: string
+        type: string 
       - name: videoUrl
         label: "رابط الفيلم"
         type: string
