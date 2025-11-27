@@ -1,7 +1,7 @@
 media:
   - name: media
     label: "الوسائط"
-    input: "src/content/media"
+    input: "content/media"
     output: "/media"
     extensions: [mp4, jpg, jpeg, png]
 
