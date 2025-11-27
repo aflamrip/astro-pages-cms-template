@@ -1,6 +1,7 @@
 ---
-title: "Inception"
-slug: "inception"
-poster: "/images/inception.jpg"
-description: "فيلم الخيال العلمي الأشهر"
+title: Inception
+tags: wedf
+video: https://erferfgew.com/werfre.mp4
+image: /media/eFabSXu.jpg
 ---
+wefwefwef
