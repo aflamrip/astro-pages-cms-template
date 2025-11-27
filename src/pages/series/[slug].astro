@@ -1,108 +1,53 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import MediaCard from '../../components/MediaCard.astro';
+import { getEntryBySlug, getCollection } from 'astro:content';
+import Plyr from 'plyr';
 
-// جلب جميع المسلسلات من الكولكشن
-export async function getStaticPaths() {
-  const series = await getCollection('series');
-  return series.map(serie => ({
-    params: { slug: serie.slug },
-    props: { serie },
-  }));
-}
-
-const { serie } = Astro.props;
-const { seasons } = serie.data;
-
-// جمع كل الحلقات في مصفوفة واحدة
-const allEpisodes = seasons.flatMap(s => 
-  s.episodes.map(e => ({ ...e, season: s.season }))
-);
-
-// إيجاد مسلسلات مشابهة بحسب النوع
-const relatedSeries = await getCollection('series', ({ data, slug }) => 
-  slug !== serie.slug && data.genres.some(g => serie.data.genres.includes(g))
-).then(series => series.slice(0, 6));
+const series = await getEntryBySlug('series', Astro.params.slug);
+const episodes = await getCollection('episodes'); // جميع الحلقات
+const seriesEpisodes = episodes.filter(e => e.data.seriesSlug === series.slug);
+let showPlayer = null; // لتحديد الحلقة التي سيتم تشغيلها
 ---
 
-<Layout title={serie.data.title}>
-  <div class="series-page">
-    <div class="series-header">
-      <img src={serie.data.poster} alt={serie.data.title} class="poster" />
-      <div class="series-info">
-        <h1>{serie.data.title}</h1>
-        
-        <!-- معلومات المسلسل -->
-        <div class="details">
-          <span>📅 {serie.data.year}</span>
-          <span>🌐 {serie.data.country}</span>
-          <span>📊 {seasons.length} مواسم</span>
-        </div>
-        
-        <!-- الكلمات الدلالية -->
-        <div class="genres">
-          {serie.data.genres.map(g => (
-            <a href={`/genre/${g}/`} class="genre-tag">{g}</a>
-          ))}
-        </div>
-        
-        <!-- الوصف -->
-        <div class="description">
-          <h3>القصة</h3>
-          <p>{serie.data.description}</p>
-        </div>
-      </div>
-    </div>
+<section class="series-page">
+  <img src={series.data.poster} alt={series.data.title} />
+  <h1>{series.data.title}</h1>
+  <p>{series.data.description}</p>
+  <p>Tags: {series.data.tags.join(", ")}</p>
 
-    <!-- قائمة الحلقات -->
-    <section class="episodes-section">
-      <h2>الحلقات</h2>
-      {seasons.map(season => (
-        <div class="season">
-          <h3>الموسم {season.season}</h3>
-          <div class="episodes-grid">
-            {season.episodes.map(ep => (
-              <a 
-                href={`/series/${serie.slug}/season/${season.season}/episode/${ep.episode}/`}
-                class="episode-card"
-              >
-                <span class="ep-number">{ep.episode}</span>
-                <span class="ep-title">{ep.title}</span>
-              </a>
-            ))}
+  <!-- الحلقات حسب الموسم -->
+  {series.data.seasons.map(season => (
+    <section class="season">
+      <h2>الموسم {season.number}</h2>
+      <div class="grid">
+        {seriesEpisodes.filter(ep => ep.data.season === season.number).map(ep => (
+          <div class="episode">
+            <img src={ep.data.poster} alt={ep.data.title} />
+            <h3>{ep.data.title}</h3>
+            <button onClick={() => showPlayer = ep.data.video}>المشاهدة الآن</button>
           </div>
-        </div>
-      ))}
-    </section>
-
-    <!-- حلقات أخرى -->
-    <section class="related-episodes">
-      <h2>حلقات أخرى</h2>
-      <div class="episodes-list">
-        {allEpisodes.slice(0, 10).map(ep => (
-          <a href={`/series/${serie.slug}/season/${ep.season}/episode/${ep.episode}/`}>
-            الحلقة {ep.episode} - {ep.title}
-          </a>
         ))}
       </div>
     </section>
+  ))}
 
-    <!-- مسلسلات مشابهة -->
-    {relatedSeries.length > 0 && (
-      <section class="related-series">
-        <h2>مسلسلات مشابهة</h2>
-        <div class="media-grid">
-          {relatedSeries.map(s => (
-            <MediaCard
-              title={s.data.title}
-              poster={s.data.poster}
-              rating={s.data.rating}
-              href={`/series/${s.slug}/`}
-              type="مسلسل"
-            />
-          ))}
-        </div>
-      </section>
-    )}
-  </div>
-</Layout>
+  <!-- مشغل الفيديو -->
+  {showPlayer && (
+    <Plyr
+      type="video"
+      sources={[{ src: showPlayer, type: showPlayer.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' }]}
+    />
+  )}
+
+  <!-- حلقات ومسلسلات مشابهة -->
+  <section class="related">
+    <h2>مسلسلات مشابهة</h2>
+    <div class="grid">
+      {seriesEpisodes.slice(0,4).map(ep => (
+        <a href={`/series/${ep.data.seriesSlug}/episode/${ep.slug}`}>
+          <img src={ep.data.poster} alt={ep.data.title} />
+          <p>{ep.data.title}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</section>
