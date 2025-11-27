@@ -1,0 +1,39 @@
+---
+import { getEntryBySlug } from 'astro:content';
+import Plyr from 'plyr';
+
+const movie = await getEntryBySlug('movies', Astro.params.slug);
+const relatedMovies = await getCollection('movies'); // يمكن تصفية حسب النوع أو التاج
+let showPlayer = false;
+---
+
+<section class="movie-page">
+  <img src={movie.data.poster} alt={movie.data.title} />
+  <h1>{movie.data.title}</h1>
+  <p>{movie.data.description}</p>
+  <p>Tags: {movie.data.tags.join(", ")}</p>
+  
+  <!-- زر المشاهدة الآن -->
+  <button onClick={() => showPlayer = !showPlayer}>المشاهدة الآن</button>
+  
+  <!-- مشغل الفيديو -->
+  {showPlayer && (
+    <Plyr
+      type="video"
+      sources={[{ src: movie.data.video, type: movie.data.video.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' }]}
+    />
+  )}
+
+  <!-- أفلام أخرى -->
+  <section class="related-movies">
+    <h2>أفلام أخرى</h2>
+    <div class="grid">
+      {relatedMovies.filter(m => m.slug !== movie.slug).slice(0,4).map(m => (
+        <a href={`/movies/${m.slug}`}>
+          <img src={m.data.poster} alt={m.data.title} />
+          <p>{m.data.title}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</section>
